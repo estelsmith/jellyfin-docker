@@ -1,5 +1,6 @@
 depends_on:
     - build
+    - deploy
 skip_clone: true
 runs_on: [success, failure]
 pipeline:

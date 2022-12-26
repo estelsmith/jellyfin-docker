@@ -1,0 +1,21 @@
+branches: main
+depends_on:
+    - build
+pipeline:
+    deploy:
+        image: registry.home.estelsmith.com/alpine:3.17
+        secrets:
+            - ansible_become_password
+            - ansible_host
+            - ansible_remote_user
+            - deploy_key
+        commands:
+            - apk --no-cache add ansible
+            - echo -n "$${ANSIBLE_BECOME_PASSWORD}" > .ansible_password
+            - echo -n "$${DEPLOY_KEY}" > deploy_key; chmod 0600 deploy_key
+            - >
+                ansible-playbook
+                --private-key deploy_key
+                --user "$${ANSIBLE_REMOTE_USER}"
+                -i $${ANSIBLE_HOST},
+                playbooks/deploy.yml
