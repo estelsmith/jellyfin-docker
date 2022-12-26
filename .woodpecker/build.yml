@@ -1,0 +1,19 @@
+branches: main
+pipeline:
+    build:
+        image: registry.home.estelsmith.com/alpine:3.17
+        secrets:
+            - registry_domain
+            - registry_username
+            - registry_password
+        commands:
+            - apk --no-cache add docker-cli docker-cli-buildx
+            - >
+                docker login
+                -u $REGISTRY_USERNAME
+                -p $${REGISTRY_PASSWORD}
+                $REGISTRY_DOMAIN
+            - >
+                docker buildx build .
+                -t $REGISTRY_DOMAIN/jellyfin-docker:latest
+                --output type=registry
