@@ -3,6 +3,8 @@ pipeline:
     build:
         image: registry.home.estelsmith.com/alpine:3.17
         privileged: true
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
         secrets:
             - registry_domain
             - registry_username
@@ -11,10 +13,10 @@ pipeline:
             - apk --no-cache add docker-cli docker-cli-buildx
             - >
                 docker login
-                -u $REGISTRY_USERNAME
+                -u $${REGISTRY_USERNAME}
                 -p $${REGISTRY_PASSWORD}
-                $REGISTRY_DOMAIN
+                $${REGISTRY_DOMAIN}
             - >
                 docker buildx build .
-                -t $REGISTRY_DOMAIN/jellyfin-docker:latest
+                -t $${REGISTRY_DOMAIN}/jellyfin-docker:latest
                 --output type=registry
