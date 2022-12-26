@@ -37,7 +37,10 @@ RUN mv dist /output
 
 FROM registry.home.estelsmith.com/alpine:3.17
 
-RUN apk --no-cache add ffmpeg
+RUN apk --no-cache add ffmpeg icu-libs
 
 COPY --from=builder /output /app
 COPY --from=builder-web /output /app/web
+
+ENTRYPOINT ["/app/jellyfin"]
+CMD ["--datadir=/app/data", "--webdir=/app/web", "--cachedir=/app/cache"]
