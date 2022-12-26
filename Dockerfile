@@ -37,10 +37,24 @@ RUN mv dist /output
 
 FROM registry.home.estelsmith.com/alpine:3.17
 
+RUN adduser -S -s /sbin/nologin -h /app -H -D appuser
 RUN apk --no-cache add ffmpeg icu-libs
 
+RUN mkdir -p /app/data && chown appuser /app/data
+RUN mkdir -p /app/cache && chown appuser /app/cache
+
 COPY --from=builder /output /app
-COPY --from=builder-web /output /app/web
+COPY --from=builder-web /output /app/jellyfin-web
+
+USER appuser
+WORKDIR /app
+
+VOLUME /app/data
+VOLUME /app/cache
+
+EXPOSE 8096/tcp
+EXPOSE 1900/udp
+EXPOSE 7359/udp
 
 ENTRYPOINT ["/app/jellyfin"]
-CMD ["--datadir=/app/data", "--webdir=/app/web", "--cachedir=/app/cache"]
+CMD ["--datadir=/app/data", "--cachedir=/app/cache"]

@@ -1,3 +1,55 @@
 -
-    debug:
-        msg: "Hello from deploy!"
+    name: create system user
+    user:
+        create_home: false
+        home: /
+        name: "{{ app_system_user }}"
+        password: "!"
+        shell: "/sbin/nologin"
+        state: present
+        system: true
+    register: app_user
+
+-
+    name: Create app directory
+    file:
+        path: "{{ app_root_dir }}/{{ directory.path|default(directory) }}"
+        state: directory
+        owner: "{{ directory.owner|default('root') }}"
+        group: "{{ directory.group|default('root') }}"
+        mode: "{{ directory.mode|default('0755') }}"
+    loop_control:
+        loop_var: directory
+    with_items:
+        - ""
+        -
+            path: data
+            owner: "{{ app_user.uid }}"
+            group: "{{ app_user.group }}"
+        -
+            path: cache
+            owner: "{{ app_user.uid }}"
+            group: "{{ app_user.group }}"
+
+-
+    name: Copy config
+    template:
+        src: "{{ file.path|default(file) }}"
+        dest: "{{ app_root_dir }}/{{ file.path|default(file) }}"
+        owner: "{{ file.owner|default('root') }}"
+        group: "{{ file.group|default('root') }}"
+        mode: "{{ file.mode|default('0644') }}"
+    loop_control:
+        loop_var: file
+    with_items:
+        - docker-compose.yml
+
+-
+    name: Update application
+    docker_compose:
+        project_name: "{{ app_compose_project_name }}"
+        project_src: "{{ app_root_dir }}"
+        pull: true
+        remove_orphans: true
+        restarted: true
+        state: present
