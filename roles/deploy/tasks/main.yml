@@ -34,6 +34,14 @@
             path: library
             owner: "{{ app_user.uid }}"
             group: "{{ app_user.group }}"
+        -
+            path: library/movies
+            owner: "{{ app_user.uid }}"
+            group: "{{ app_user.group }}"
+        -
+            path: library/shows
+            owner: "{{ app_user.uid }}"
+            group: "{{ app_user.group }}"
 
 -
     name: Copy config
