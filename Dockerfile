@@ -39,7 +39,5 @@ FROM registry.home.estelsmith.com/alpine:3.17
 
 RUN apk --no-cache add ffmpeg
 
-RUN mkdir /app
-
-COPY --from=builder /output/jellyfin /app/jellyfin
+COPY --from=builder /output /app
 COPY --from=builder-web /output /app/web

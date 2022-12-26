@@ -1,0 +1,19 @@
+depends_on:
+    - build
+skip_clone: true
+runs_on: [success, failure]
+pipeline:
+    notify:
+        image: registry.home.estelsmith.com/alpine:3.17
+        secrets:
+            - gotify_token
+            - gotify_url
+        commands:
+            - apk --no-cache add curl
+            - >
+                curl "$${GOTIFY_URL}/message"
+                --fail
+                --url-query "token=$${GOTIFY_TOKEN}"
+                -F "title=Jellyfin Pipeline #${CI_BUILD_NUMBER}"
+                -F "message=$${CI_BUILD_STATUS}"
+                -F "priority=5"
