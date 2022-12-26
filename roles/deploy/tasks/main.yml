@@ -30,6 +30,10 @@
             path: cache
             owner: "{{ app_user.uid }}"
             group: "{{ app_user.group }}"
+        -
+            path: library
+            owner: "{{ app_user.uid }}"
+            group: "{{ app_user.group }}"
 
 -
     name: Copy config

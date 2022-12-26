@@ -42,6 +42,7 @@ RUN apk --no-cache add ffmpeg icu-libs
 
 RUN mkdir -p /app/data && chown appuser /app/data
 RUN mkdir -p /app/cache && chown appuser /app/cache
+RUN mkdir -p /app/library && chown appuser /app/library
 
 COPY --from=builder /output /app
 COPY --from=builder-web /output /app/jellyfin-web
@@ -51,6 +52,7 @@ WORKDIR /app
 
 VOLUME /app/data
 VOLUME /app/cache
+VOLUME /app/library
 
 EXPOSE 8096/tcp
 EXPOSE 1900/udp
