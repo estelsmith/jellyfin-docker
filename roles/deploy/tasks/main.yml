@@ -1,14 +1,16 @@
 -
-    name: create system user
+    name: "Create system user"
     user:
         create_home: false
-        home: /
+        group: "{{ app_system_user_gid }}"
+        home: "/"
         name: "{{ app_system_user }}"
         password: "!"
         shell: "/sbin/nologin"
-        state: present
+        state: "present"
         system: true
-    register: app_user
+        uid: "{{ app_system_user_uid }}"
+    register: "app_user"
 
 -
     name: Create app directory
@@ -42,6 +44,7 @@
             path: library/shows
             owner: "{{ app_user.uid }}"
             group: "{{ app_user.group }}"
+    register: "app_dirs_modified"
 
 -
     name: Copy config
@@ -55,6 +58,7 @@
         loop_var: file
     with_items:
         - docker-compose.yml
+    register: "app_files_modified"
 
 -
     name: Update application
@@ -65,3 +69,4 @@
         remove_orphans: true
         restarted: true
         state: present
+    when: "not app_skip_start and (app_dirs_modified.changed or app_files_modified.changed)"

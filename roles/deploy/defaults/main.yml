@@ -1,7 +1,13 @@
-app_root_dir: "/srv/jellyfin"
-app_system_user: "jellyfin"
-app_compose_project_name: "jellyfin"
-app_compose_traefik_service: "jellyfin"
+project_name: "jellyfin"
+
+app_system_user: "{{ project_name }}"
+app_system_user_uid: ~
+app_system_user_gid: ~
+app_root_dir: "/srv/{{ project_name }}"
+app_skip_start: false
+
+app_compose_project_name: "{{ project_name }}"
+app_compose_traefik_service: "{{ project_name }}"
 
 app_image: "registry.home.estelsmith.com/jellyfin-docker:latest"
-app_hostname: "jellyfin.home.estelsmith.com"
+app_hostname: "{{ project_name }}.local"

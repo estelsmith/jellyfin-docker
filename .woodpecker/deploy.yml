@@ -9,13 +9,16 @@ pipeline:
             - ansible_host
             - ansible_remote_user
             - deploy_key
+            - ansible_extra_vars
         commands:
             - apk --no-cache add ansible
             - echo -n "$${ANSIBLE_BECOME_PASSWORD}" > .ansible_password
             - echo -n "$${DEPLOY_KEY}" > deploy_key; chmod 0600 deploy_key
+            - echo -n "$${ANSIBLE_EXTRA_VARS}" > extra_vars.yml
             - >
                 ansible-playbook
                 --private-key deploy_key
                 --user "$${ANSIBLE_REMOTE_USER}"
                 -i $${ANSIBLE_HOST},
+                -e @extra_vars.yml
                 playbooks/deploy.yml
