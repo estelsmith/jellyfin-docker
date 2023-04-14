@@ -11,3 +11,5 @@ app_compose_traefik_service: "{{ project_name }}"
 
 app_image: "registry.home.estelsmith.com/jellyfin-docker:latest"
 app_hostname: "{{ project_name }}.local"
+
+app_library_path: "/srv/jellyfin/library"

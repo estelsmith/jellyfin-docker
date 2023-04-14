@@ -1,4 +1,12 @@
 -
+  name: "Create system group"
+  group:
+    name: "{{ app_system_user }}"
+    gid: "{{ app_system_user_gid }}"
+    state: "present"
+    system: true
+
+-
     name: "Create system user"
     user:
         create_home: false
@@ -32,19 +40,23 @@
             path: cache
             owner: "{{ app_user.uid }}"
             group: "{{ app_user.group }}"
-        -
-            path: library
-            owner: "{{ app_user.uid }}"
-            group: "{{ app_user.group }}"
-        -
-            path: library/movies
-            owner: "{{ app_user.uid }}"
-            group: "{{ app_user.group }}"
-        -
-            path: library/shows
-            owner: "{{ app_user.uid }}"
-            group: "{{ app_user.group }}"
     register: "app_dirs_modified"
+
+-
+    name: "Create library directories"
+    file:
+        path: "{{ app_library_path }}/{{ directory.path|default(directory) }}"
+        state: directory
+        owner: "{{ directory.owner|default(app_system_user) }}"
+        group: "{{ directory.group|default(app_system_user) }}"
+        mode: "{{ directory.mode|default('0755') }}"
+    loop_control:
+        loop_var: directory
+    with_items:
+        - ""
+        - "movies"
+        - "shows"
+        - "transcode-scratch"
 
 -
     name: Copy config

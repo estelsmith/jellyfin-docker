@@ -7,18 +7,18 @@ services:
             JELLYFIN_PublishedServerUrl: "{{ app_hostname }}"
         labels:
             traefik.enable: "true"
-            traefik.http.routers.{{ app_compose_traefik_service }}.entryPoints: tls
+            traefik.http.routers.{{ app_compose_traefik_service }}.entryPoints: "tls"
             traefik.http.routers.{{ app_compose_traefik_service }}.rule: "Host(`{{ app_hostname }}`)"
             traefik.http.routers.{{ app_compose_traefik_service }}.tls: "true"
-            traefik.http.services.{{ app_compose_traefik_service }}.loadbalancer.server.port: 8096
+            traefik.http.services.{{ app_compose_traefik_service }}.loadbalancer.server.port: "8096"
         networks:
-            - traefik
-        restart: unless-stopped
+            - "traefik"
+        restart: "unless-stopped"
         user: "{{ app_user.uid }}:{{ app_user.group }}"
         volumes:
-            - ./data:/app/data
-            - ./cache:/app/cache
-            - ./library:/app/library
+            - "./data:/app/data"
+            - "./cache:/app/cache"
+            - "{{ app_library_path }}:/app/library"
 
 networks:
     traefik:
